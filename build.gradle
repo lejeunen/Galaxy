@@ -66,6 +66,9 @@ dependencies {
 	tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
 		exclude group: "org.eclipse.jdt.core.compiler", module: "ecj"
     }
+
+	// log4j logger required for logging on AppFog
+	compile group: "com.logentries", name: "logentries-appender", version: "1.1.24"
 }
 
 //----------------------------------------------------------------------------------------------------------------------------
