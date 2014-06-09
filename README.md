@@ -27,6 +27,8 @@ Again, focus and simpliciy ...
 Requirements
 ------------
 
+The application uses [Gradle](http://www.gradle.org/) for building/packaging itself. 
+
 The application assumes a **PostgreSQL** database server is configured, running and awaiting
 connections. Its configuration must be matched in the properties described below.
 
@@ -51,13 +53,26 @@ file can also optionally be changed, if needed.
 Building
 --------
 
-The application uses [Gradle](http://www.gradle.org/) for building/packaging itself. To produce a valid WAR
-file, simply use the following command line from the root folder of the project (where the build.gradle file is located):
+To produce a valid WAR file, simply use the following command line from the root folder of the
+project (where the build.gradle file is located):
 
 **gradle build**
 
 The build artefact (*Galaxy.war*) will be produced in the *build/libs* folder. You can grab the WAR from that
 location and have it deployed on your app server. The application was tested using a Tomcat 7 application server.
+
+Bootstrapping
+-------------
+
+The application needs to be bootstrapped. That is a database schema and some seed data needs to be created. To
+do so, use the following Gradle command from the root folder of the project:
+
+**gradle dbInit**
+
+This will drop the existing Galaxy database (if it exists) and re-create it.
+
+To log into the application from the web interface, you can use the user/password **admin/admin**. More users
+are also bootstraped, if needed. The actual seed database script can be found @ */db/pg.seed.sql*.
 
 AppDirect Configuration
 =======================
