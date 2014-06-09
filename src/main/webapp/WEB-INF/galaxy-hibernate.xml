@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright (c) Cybernetix Inc - 2013 -->
+
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Hibernate -->
+
+	<bean id="transactionalDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="username" value="@dbUsername@"/>
+		<property name="password" value="@dbPassword@"/>
+		<property name="url" value="jdbc:postgresql://@dbHost@:@dbPort@/@dbName@"/>
+		<property name="driverClassName" value="org.postgresql.Driver"/>
+		<property name="defaultAutoCommit" value="false"/>
+		<property name="initialSize" value="10"/>
+		<property name="maxIdle" value="10"/>
+		<property name="maxActive" value="40"/>
+		<property name="maxWait" value="10000"/>
+		<property name="testOnBorrow" value="true"/>
+		<property name="validationQuery" value="select 1"/>
+		<property name="removeAbandoned" value="true"/>
+		<property name="logAbandoned" value="true"/>
+		<property name="removeAbandonedTimeout" value="300"/>
+	</bean>
+
+	<bean id="hibernateProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.use_sql_comments">true</prop>
+				<prop key="hibernate.jdbc.batch_size">50</prop>
+				<prop key="hibernate.query.substitutions">true 1, false 0</prop>
+				<prop key="hibernate.max_fetch_depth">6</prop>
+				<prop key="hibernate.connection.release_mode">after_transaction</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="hibernateSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="transactionalDataSource"/>
+		<property name="hibernateProperties" ref="hibernateProperties"/>
+		<property name="packagesToScan" value="com.cybernetix.model"/>
+	</bean>
+
+	<bean id="hibernateTransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="hibernateSessionFactory"/>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="hibernateTransactionManager" proxy-target-class="true"/>
+
+</beans>

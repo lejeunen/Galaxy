@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html ng-app="galaxy">
+
+	<head>
+		<title>Galaxy - User List</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="css/galaxy.css" media="screen">
+		<style>
+			body {
+				width: 800px;
+			}
+			.container {
+				margin: 100px;
+			}
+			.logout {
+				margin-top: 15px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="NavigationController as navCtrl">
+
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="nav navbar-brand">Galaxy</div>
+				<ul class="nav navbar-nav">
+					<li ng-class="{ 'active' : navCtrl.isGalaxyList() }">
+						<a ng-click="navCtrl.gotoGalaxyList()" href="#">Galaxies</a>
+					</li>
+					<li ng-class="{ 'active' : navCtrl.isPlanetList() }">
+						<a ng-click="navCtrl.gotoPlanetList()" href="#">Planets</a>
+					</li>
+					<li ng-show="navCtrl.user.isAdmin" ng-class="{ 'active' : navCtrl.isCompanyList() }">
+						<a ng-click="navCtrl.gotoCompanyList()" href="#">Companies</a>
+					</li>
+					<li ng-show="navCtrl.user.isAdmin" ng-class="{ 'active' : navCtrl.isUserList() }">
+						<a ng-click="navCtrl.gotoUserList()" href="#">Users</a>
+					</li>
+				</ul>
+				<div class="nav navbar-right logout">
+					<a href="#" rel="popover" data-trigger="hover" data-placement="bottom" data-html="true"
+						data-original-title="
+							<strong>{{navCtrl.user.firstName}} {{navCtrl.user.lastName}}
+							<span>{{{true: '&nbsp;(Admin)', false: ''}[navCtrl.user.isAdmin]}}</span></strong>"
+						data-content="
+							Email: <strong>{{navCtrl.user.email}}</strong><br/>
+							Company: <strong>{{navCtrl.user.company.name}}</strong><br/>
+							Edition: <strong>{{navCtrl.user.company.edition}}</strong>">
+							{{navCtrl.user.lastName}}, {{navCtrl.user.firstName}}</a>
+					&nbsp;|&nbsp;
+					<a href="logout">Sign out</a>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-10">
+					<div class="panel panel-default">
+
+						<!-- galaxy list -->
+						<div class="panel-body" ng-show="navCtrl.isGalaxyList()" ng-controller="GalaxyListController as dataCtrl">
+
+							<!-- nav bar -->
+							<nav class="navbar navbar-default" role="navigation">
+								<div class="container-fluid">
+									<div class="navbar-brand">Galaxy List</div>
+									<div class="nav navbar-right refresh">
+										<button type="button" class="btn btn-default navbar-btn refresh" ng-click="dataCtrl.load()">
+											<span class="glyphicon glyphicon-refresh"></span> Refresh
+										</button>
+									</div>
+								</div>
+							</nav>
+
+							<!-- data table -->
+							<div class="table-responsive center-block">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="header">
+										<tr>
+											<th>Name</th>
+											<th>Alternate Name</th>
+											<th>Distance from Earth</th>
+											<th>Number of Stars</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr ng-repeat="record in dataCtrl.data">
+											<td>{{record.name}}</td>
+											<td>{{record.alternateName}}</td>
+											<td>{{record.distanceFromEarth}}</td>
+											<td>{{record.nbStars}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- planet list -->
+						<div class="panel-body" ng-show="navCtrl.isPlanetList()" ng-controller="PlanetListController as dataCtrl">
+
+							<!-- nav bar -->
+							<nav class="navbar navbar-default" role="navigation">
+								<div class="container-fluid">
+									<div class="navbar-brand">Planet List</div>
+									<div class="nav navbar-right refresh">
+										<button type="button" class="btn btn-default navbar-btn refresh" ng-click="dataCtrl.load()">
+											<span class="glyphicon glyphicon-refresh"></span> Refresh
+										</button>
+									</div>
+								</div>
+							</nav>
+
+							<!-- data table -->
+							<div class="table-responsive center-block">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="header">
+										<tr>
+											<th>Name</th>
+											<th>Orbital Speed</th>
+											<th>Distance from Sun</th>
+											<th>Radius</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr ng-repeat="record in dataCtrl.data">
+											<td>{{record.name}}</td>
+											<td>{{record.orbitalSpeed}}</td>
+											<td>{{record.distanceFromSun}}</td>
+											<td>{{record.radius}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- company list -->
+						<div class="panel-body" ng-show="navCtrl.isCompanyList()" ng-controller="CompanyListController as dataCtrl">
+
+							<!-- nav bar -->
+							<nav class="navbar navbar-default" role="navigation">
+								<div class="container-fluid">
+									<div class="navbar-brand">Company List</div>
+									<div class="nav navbar-right refresh">
+										<button type="button" class="btn btn-default navbar-btn refresh" ng-click="dataCtrl.load()">
+											<span class="glyphicon glyphicon-refresh"></span> Refresh
+										</button>
+									</div>
+								</div>
+							</nav>
+
+							<!-- data table -->
+							<div class="table-responsive center-block">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="header">
+										<tr>
+											<th>Name</th>
+											<th>Subscription Edition</th>
+											<th>Latest Notice</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr ng-repeat="record in dataCtrl.data">
+											<td>{{record.name}}</td>
+											<td>{{record.edition}}</td>
+											<td>{{record.notice}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- user list -->
+						<div class="panel-body" ng-show="navCtrl.isUserList()" ng-controller="UserListController as dataCtrl">
+
+							<!-- nav bar -->
+							<nav class="navbar navbar-default" role="navigation">
+								<div class="container-fluid">
+									<div class="navbar-brand">User List</div>
+									<div class="nav navbar-right refresh">
+										<button type="button" class="btn btn-default navbar-btn refresh" ng-click="dataCtrl.load()">
+											<span class="glyphicon glyphicon-refresh"></span> Refresh
+										</button>
+									</div>
+								</div>
+							</nav>
+
+							<!-- data table -->
+							<div class="table-responsive center-block">
+								<table class="table table-striped table-bordered table-hover">
+									<thead class="header">
+										<tr>
+											<th>First Name</th>
+											<th>Last Name</th>
+											<th>Username</th>
+											<th>Email</th>
+											<th>Company</th>
+											<th>Admin</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr ng-repeat="record in dataCtrl.data">
+											<td>{{record.firstName}}</td>
+											<td>{{record.lastName}}</td>
+											<td>{{record.usernameOrOpenId}}</td>
+											<td>{{record.email}}</td>
+											<td>{{record.company.name}}</td>
+											<td><span ng-show="{{record.isAdmin}}" class="glyphicon glyphicon-ok"></span></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="lib/angular/angular.min.js"></script>
+		<script type="text/javascript" src="js/app.js"></script>
+
+		<script type="text/javascript">
+			$('[rel=popover]').popover();
+		</script>
+
+	</body>
+</html>

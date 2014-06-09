@@ -1,0 +1,133 @@
+// Copyright (c) Cybernetix Inc - 2013
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+//----------------------------------------------------------------------------------------------------------------------------
+apply plugin: "java"
+apply plugin: "war"
+apply plugin: "tomcat"
+apply plugin: "eclipse"
+
+//----------------------------------------------------------------------------------------------------------------------------
+def projectName = "Galaxy"
+def projectVersion = "0.1"
+
+//----------------------------------------------------------------------------------------------------------------------------
+Properties runtimeProperties = new Properties()
+runtimeProperties.load(new FileInputStream("src/main/resources/galaxy-runtime.properties"))
+ext.setProperty("runtimeProperties", runtimeProperties.getProperties())
+
+//----------------------------------------------------------------------------------------------------------------------------
+buildscript {
+
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath "org.gradle.api.plugins:gradle-tomcat-plugin:1.2.3"
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+allprojects {
+	gradle.projectsEvaluated {
+		tasks.withType(JavaCompile) {
+			options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+repositories {
+
+	mavenCentral()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+dependencies {
+
+	compile group: "org.springframework", name: "spring-orm", version: "4.0.5.RELEASE"
+	compile group: "org.springframework", name: "spring-webmvc", version: "4.0.5.RELEASE"
+	compile group: "org.springframework.security", name: "spring-security-web", version: "3.2.4.RELEASE"
+    compile group: "org.springframework.security", name: "spring-security-config", version: "3.2.4.RELEASE"
+    compile group: "org.springframework.security", name: "spring-security-openid", version: "3.2.4.RELEASE"
+    compile group: "org.springframework.security.oauth", name: "spring-security-oauth", version: "2.0.1.RELEASE"
+	compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.4.0"
+	compile group: "org.hibernate", name: "hibernate-core", version: "4.3.5.Final"
+	compile group: "log4j", name: "log4j", version: "1.2.17"
+
+	runtime group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
+	runtime group: "postgresql", name: "postgresql", version: "9.1-901-1.jdbc4"
+
+	def tomcatVersion = "7.0.11"
+	tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+		"org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+	tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+		exclude group: "org.eclipse.jdt.core.compiler", module: "ecj"
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+war {
+
+	manifest {
+		attributes (
+			"Implementation-Title": "${projectName}",
+			"Implementation-Version": "${projectVersion}"
+		)
+	}
+
+	filter(ReplaceTokens, tokens: runtimeProperties)
+
+	rename("log4j.properties", "classes/log4j.properties")
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+task dbScriptStaging (type: Copy) {
+
+	from "db"
+	into "build/tmp/db"
+	filter(ReplaceTokens, tokens: runtimeProperties)
+}
+
+//----------------------------------------------------------------------------------------------------------------------------
+task dbInit (dependsOn: dbScriptStaging) << {
+
+	def userid = runtimeProperties["dbUsername"]
+	def password = runtimeProperties["dbPassword"]
+
+	// drop/re-create database schema
+
+	def urlInit = "jdbc:postgresql://" + runtimeProperties["dbHost"] + ":" +
+		runtimeProperties["dbPort"] + "/postgres"
+
+	ant.sql(
+		src: "build/tmp/db/pg.init.sql",
+		driver: "org.postgresql.Driver",
+		url: urlInit,
+		userid: userid,
+		password: password,
+		autocommit: "true",
+		delimiter: ";",
+		onerror: "abort",
+		classpath: configurations.runtime.asPath
+	)
+
+	// seed database with test/bootstrap data
+
+	def urlSeed = "jdbc:postgresql://" + runtimeProperties["dbHost"] + ":" +
+		runtimeProperties["dbPort"] + "/" + runtimeProperties["dbName"]
+
+	ant.sql(
+		src: "build/tmp/db/pg.seed.sql",
+		driver: "org.postgresql.Driver",
+		url: urlSeed,
+		userid: userid,
+		password: password,
+		autocommit: "true",
+		delimiter: ";",
+		onerror: "abort",
+		classpath: configurations.runtime.asPath
+	)
+}

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright (c) Cybernetix Inc - 2013 -->
+
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/security/oauth http://www.springframework.org/schema/security/spring-security-oauth-1.0.xsd">
+
+	<!-- Spring Security -->
+
+	<security:global-method-security pre-post-annotations="enabled"/>
+
+	<!-- non secured entry points -->
+
+	<security:http pattern="/index.htm*" security="none"/>
+	<security:http pattern="/login.htm*" security="none"/>
+	<security:http pattern="/signup.htm*" security="none"/>
+	<security:http pattern="/forgot.htm*" security="none"/>
+	<security:http pattern="/css/**" security="none"/>
+	<security:http pattern="/js/**" security="none"/>
+	<security:http pattern="/lib/**" security="none"/>
+
+	<!-- oauth secured entry points -->
+
+	<security:http pattern="/api/*/appDirect/**" security="none"/> 
+<!-- 
+	<security:http pattern="/api/*/appDirect/**" entry-point-ref="oauthProcessingFilterEntryPoint">
+		<security:intercept-url pattern="/api/*/appDirect/**" access="ROLE_OAUTH_APPDIRECT"/>
+	</security:http>
+ -->
+
+	<!-- all other secured entry points -->
+
+	<security:http pattern="/**">
+		<security:intercept-url pattern="/**" access="ROLE_USER"/>
+		<security:openid-login
+			login-processing-url="/login-openid"
+			default-target-url="/main.html"
+			always-use-default-target="true"/>
+		<security:form-login
+			login-processing-url="/login"
+			username-parameter="userid"
+			password-parameter="password"
+			login-page="/login.html"
+			default-target-url="/main.html"
+			always-use-default-target="true"/>
+		<security:logout logout-success-url="/login.html" logout-url="/logout" invalidate-session="true"/>
+	</security:http>
+
+	<!-- authentication provider used for both oauth and standard authentication -->
+
+	<security:authentication-manager alias="authManager">
+		<security:authentication-provider user-service-ref="securityUserService"/>
+	</security:authentication-manager>
+
+	<!-- oauth provider configuration: used when Galaxy application is receiving API calls from AppDirect -->
+
+	<oauth:provider
+		consumer-details-service-ref="securityUserService"
+		token-services-ref="tokenServices"
+		nonce-services-ref="nonceServices"
+		require10a="true"/>
+
+	<bean id="oauthProcessingFilterEntryPoint" class="org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint"/>
+	<bean id="nonceServices" class="org.springframework.security.oauth.provider.nonce.InMemoryNonceServices" />
+
+    <oauth:token-services id="tokenServices"/>
+
+	<!-- oauth consumer configuration: used when Galaxy application is initiating API calls into AppDirect -->
+
+	<oauth:resource-details-service id="resourceDetails">
+		<oauth:resource
+			id="appDirect"
+			key="${appDirectOAuthConsumerKey}"
+			secret="${appDirectOAuthConsumerSecret}"
+			request-token-url="http://localhost:8080/appDirect/oauth/request_token"
+			user-authorization-url="http://localhost:8080/appDirect/oauth/confirm_access"
+			access-token-url="http://localhost:8080/appDirect/oauth/access_token">
+		</oauth:resource>
+	</oauth:resource-details-service>
+
+	<bean id="appDirectEventExtractor" class="com.cybernetix.appdirect.service.impl.EventDataExtractorImpl">
+		<property name="restTemplate">
+			<bean class="org.springframework.security.oauth.consumer.client.OAuthRestTemplate">
+				<constructor-arg ref="appDirect"/>
+			</bean>
+		</property>
+	</bean>
+
+</beans>
