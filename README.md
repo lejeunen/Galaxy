@@ -61,6 +61,11 @@ project (where the build.gradle file is located):
 The build artefact (*Galaxy.war*) will be produced in the *build/libs* folder. You can grab the WAR from that
 location and have it deployed on your app server. The application was tested using a Tomcat 7 application server.
 
+If you want to work with the project inside Eclipse, use the following command line to generate the Eclipse .project
+and .classpath files.
+
+**gradle eclipse**
+
 Bootstrapping
 -------------
 
