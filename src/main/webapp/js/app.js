@@ -27,13 +27,13 @@ app.controller('LoginController', [ '$http', function($http) {
 
 		$http({
 			method: 'POST',
-			url: '/Galaxy/login',
+			url: 'login',
 			data: $.param(credentials),
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 
 		}).success(
 			function(data, status, headers, config) {
-				window.location = '/Galaxy/main.html';
+				window.location = 'main.html';
 			})
 	};
 }]);
@@ -49,7 +49,7 @@ app.controller('NavigationController', [ '$http', function($http) {
 
 		$http({
 			method: 'GET',
-			url: '/Galaxy/api/v1/user/me'
+			url: 'api/v1/user/me'
 
 		})
 		.success(
@@ -103,7 +103,7 @@ app.controller('GalaxyListController', [ '$http', function($http) {
 
 		$http({
 			method: 'GET',
-			url: '/Galaxy/api/v1/galaxy'
+			url: 'api/v1/galaxy'
 
 		})
 		.success(
@@ -125,7 +125,7 @@ app.controller('PlanetListController', [ '$http', function($http) {
 
 		$http({
 			method: 'GET',
-			url: '/Galaxy/api/v1/planet'
+			url: 'api/v1/planet'
 
 		})
 		.success(
@@ -147,7 +147,7 @@ app.controller('CompanyListController', [ '$http', function($http) {
 
 		$http({
 			method: 'GET',
-			url: '/Galaxy/api/v1/company'
+			url: 'api/v1/company'
 
 		})
 		.success(
@@ -169,7 +169,7 @@ app.controller('UserListController', [ '$http', function($http) {
 
 		$http({
 			method: 'GET',
-			url: '/Galaxy/api/v1/user'
+			url: 'api/v1/user'
 
 		})
 		.success(

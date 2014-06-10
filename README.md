@@ -78,41 +78,42 @@ AppDirect Configuration
 =======================
 
 In your **AppDirect** account, make sure you have your integration points configured with the following
-information. You MUST replace all occurences of **{HOST}** with the actual web host address where the
-application will be hosted. Obviously, this host MUST be visible/accessible from the internet.
+information. You MUST replace all occurences of **{HOST[+PATH]}** with the actual web host address and
+optional web context path where the application will be hosted. Obviously, this host MUST be visible/accessible
+from the internet.
 
 Single Sign On
 --------------
 
 **Login URL**
-http://{HOST}/Galaxy/login-openid?openid_identifier={openid}
+http://{HOST[+PATH]}/login-openid?openid_identifier={openid}
 
 **OpenID Realm**
-http://{HOST}/*
+http://{HOST[+PATH]}/*
 
 Subscriptions
 -------------
 
 **Subscription Create Notification URL**
-http://{HOST}/Galaxy/api/v1/appDirect/subscriptionCreate?eventUrl={eventUrl}
+http://{HOST[+PATH]}/api/v1/appDirect/subscriptionCreate?eventUrl={eventUrl}
 
 **Subscription Change Notification URL**
-http://{HOST}/Galaxy/api/v1/appDirect/subscriptionChange?eventUrl={eventUrl}
+http://{HOST[+PATH]}/api/v1/appDirect/subscriptionChange?eventUrl={eventUrl}
 
 **Subscription Cancel Notification URL**
-http://{HOST}/Galaxy/api/v1/appDirect/subscriptionCancel?eventUrl={eventUrl}
+http://{HOST[+PATH]}/api/v1/appDirect/subscriptionCancel?eventUrl={eventUrl}
 
 **Subscription Status Notification URL**
-http://{HOST}/Galaxy/api/v1/appDirect/subscriptionStatus?eventUrl={eventUrl}
+http://{HOST[+PATH]}/api/v1/appDirect/subscriptionStatus?eventUrl={eventUrl}
 
 Access Management
 -----------------
 
 **User Assignment Notification URL**
-http://{HOST}/Galaxy/api/v1/appDirect/userAssign?eventUrl={eventUrl}
+http://{HOST[+PATH]}/api/v1/appDirect/userAssign?eventUrl={eventUrl}
 
 **User Unassignment Notification URL**
-http://{HOST}/Galaxy/api/v1/appDirect/userUnassign?eventUrl={eventUrl}
+http://{HOST[+PATH]}/api/v1/appDirect/userUnassign?eventUrl={eventUrl}
 
 Closing Words
 =============
