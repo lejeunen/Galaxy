@@ -41,14 +41,15 @@ Configuration
 If you want to build/deploy this code, you will first want to edit the *galaxy-runtime.properties*
 file located in the */src/main/resources* folder.
 
-The properties in below MUST be updated to reflect your runtime setup. The other properties in that
-file can also optionally be changed, if needed.
+The properties below MUST be updated to reflect your runtime setup. The other properties in the
+file can also be *optionally* changed, if needed.
 
-**dbUsername**
-**dbPassword**
+Properties:
+* **dbUsername**
+* **dbPassword**
 
-**appDirectOAuthConsumerKey**
-**appDirectOAuthConsumerSecret**
+* **appDirectOAuthConsumerKey**
+* **appDirectOAuthConsumerSecret**
 
 Building
 --------
