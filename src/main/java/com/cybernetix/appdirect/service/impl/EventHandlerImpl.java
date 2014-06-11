@@ -176,7 +176,7 @@ public class EventHandlerImpl implements EventHandler
 		if (user == null)
 		{
 			throw new EventResultException(Error.USER_NOT_FOUND,
-				String.format("User doesn't exist @ %s - Operation cancelled.", userIdentifier));
+				String.format("User doesn't exist @ %s.", userIdentifier));
 		}
 
 		return user;
@@ -193,7 +193,7 @@ public class EventHandlerImpl implements EventHandler
 		catch(DataIntegrityViolationException e)
 		{
 			throw new EventResultException(Error.USER_ALREADY_EXISTS,
-				String.format("User already exists @ %s - %s - Operation cancelled.", company.getName(), user.getEmail()));
+				String.format("User already exists @ %s - %s.", company.getName(), user.getEmail()));
 		}
 	}
 }
