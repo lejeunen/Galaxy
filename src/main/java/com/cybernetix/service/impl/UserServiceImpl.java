@@ -53,7 +53,6 @@ public class UserServiceImpl extends AbstractServiceImpl<User, UserDao> implemen
 
 	//--------------------------------------------------------------------------------------------------------------------------------
 	@Override
-	@Transactional(readOnly = true)
 	public User getSelf()
 	{
 		SecurityContext context = SecurityContextHolder.getContext();
