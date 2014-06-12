@@ -12,6 +12,12 @@ app.controller('LoginController', [ '$http', function($http) {
 	ctrl.userid = '';
 	ctrl.password = '';
 	ctrl.submitted = false;
+	ctrl.loginFailure = false;
+
+	ctrl.clearFailure = function() {
+
+		ctrl.loginFailure = false;
+	};
 
 	ctrl.login = function(isValid) {
 
@@ -33,7 +39,11 @@ app.controller('LoginController', [ '$http', function($http) {
 
 		}).success(
 			function(data, status, headers, config) {
-				window.location = 'main.html';
+
+				ctrl.loginFailure = angular.fromJson(data).loginFailure;
+
+				if (!ctrl.loginFailure)
+					window.location = 'main.html';
 			})
 	};
 }]);
@@ -54,6 +64,14 @@ app.controller('NavigationController', [ '$http', function($http) {
 		})
 		.success(
 			function(data, status, headers, config) {
+
+				// if html is returned (instead of JSON), the login.html page was sent, redirect accordingly
+				if (headers('content-type') == 'text/html')
+				{
+					window.location = 'login.html';
+					return;
+				}
+
 				ctrl.user = data;
 			});
 	};

@@ -20,6 +20,7 @@
 
 	<security:http pattern="/index.htm*" security="none"/>
 	<security:http pattern="/login.htm*" security="none"/>
+	<security:http pattern="/loginFailure.json" security="none"/>
 	<security:http pattern="/signup.htm*" security="none"/>
 	<security:http pattern="/forgot.htm*" security="none"/>
 	<security:http pattern="/css/**" security="none"/>
@@ -48,7 +49,8 @@
 			username-parameter="userid"
 			password-parameter="password"
 			login-page="/login.html"
-			default-target-url="/main.html"
+			default-target-url="/loginSuccess.json"
+			authentication-failure-url="/loginFailure.json"
 			always-use-default-target="true"/>
 		<security:logout logout-success-url="/login.html" logout-url="/logout" invalidate-session="true"/>
 	</security:http>
