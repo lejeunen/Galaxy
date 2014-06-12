@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth.common.OAuthException;
 import org.springframework.security.oauth.common.signature.SharedConsumerSecret;
 import org.springframework.security.oauth.common.signature.SharedConsumerSecretImpl;
@@ -48,7 +49,12 @@ public class UserServiceImpl extends AbstractServiceImpl<User, UserDao> implemen
 	@Transactional(readOnly = true)
 	public User loadUserByUsername(String loginId)
 	{
-		return userDao.loadByLoginId(loginId);
+		User user = userDao.loadByLoginId(loginId);
+
+		if (user == null)
+			throw new UsernameNotFoundException("No matching user found.");
+
+		return user;
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------------
